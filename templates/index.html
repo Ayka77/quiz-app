@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quiz</title>
+</head>
+<body>
+
+<h2>Question:</h2>
+<p>{{ question }}</p>
+
+<form method="POST" action="/check" autocomplete="off">
+    <input type="text" name="antwort123" autocomplete="off">
+    <button type="submit">Answer</button>
+</form>
+    
+    
+    
+    
+    
+{% if feedback == "correct" %}
+	<p style="color:green; font-size:20px;"> Richtig!</p>
+
+{% elif feedback == "wrong" %}
+	<p style="color:red; font-size:20px;"> Falsch!</p>
+	
+	<!-- <p>Richtige Antwort: <b>{{ correct_answer }}</b></p>  -->
+	
+{% elif feedback == "timeout" %}
+	<p style="color:orange; font-size:20px;"> Zeit abgelaufen!</p>
+	
+	
+	<!-- <p>Richtige Antwort: <b>{{ correct_answer }}</b></p>   -->
+{% endif %}
+
+
+
+
+
+
+
+
+
+<p>Score: {{ score }}</p>
+<p>Progress: {{ progress }}</p>
+
+
+
+<div style="margin-bottom:10px;">
+    <span style="font-size:22px;">⏳</span>
+    <span id="timeText">60</span> Sekunden
+</div>
+
+<div style="width:100%; background:#ddd; height:10px; border-radius:5px;">
+    <div id="timeBar" style="height:10px; width:100%; background:#4CAF50; border-radius:5px;"></div>
+</div>
+
+
+
+<script>
+let totalTime = 60;
+let timeLeft = totalTime;
+
+let timer = setInterval(function() {
+    timeLeft--;
+
+    // Zahl aktualisieren
+    document.getElementById("timeText").textContent = timeLeft;
+
+    // Fortschrittsbalken aktualisieren
+    let percent = (timeLeft / totalTime) * 100;
+    document.getElementById("timeBar").style.width = percent + "%";
+
+    // Farbe ändern (nice UX)
+    if (percent < 50) {
+        document.getElementById("timeBar").style.background = "orange";
+    }
+    if (percent < 20) {
+        document.getElementById("timeBar").style.background = "red";
+    }
+
+    // Zeit abgelaufen → submit
+    if (timeLeft <= 0) {
+        clearInterval(timer);
+        document.forms[0].submit();
+    }
+
+}, 1000);
+</script>
+
+
+
+
+<!-- Fortschrittsbalken -->
+<div style="width:300px; background:#ddd;">
+    <div style="width:{{ percent }}%; background:green; color:white;">
+        {{ percent }}%
+    </div>
+</div>
+
+<br>
+
+<form action="/restart">
+    <button type="submit">🔄 Restart</button>
+</form>
+
+</body>
+</html>
